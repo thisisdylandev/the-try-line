@@ -1,0 +1,51 @@
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = "native"
+}
+
+model User {
+  id                  Int       @id @default(autoincrement())
+  email               String    @unique
+  hashedPassword      String
+  salt                String
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+  roles               String    @default("user")
+  teamId              Int       @default(0)
+}
+
+model Team {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  location            String
+  description         String
+  joinCode            String    @unique @default("Rugby!")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Player {
+  id                  Int       @id @default(autoincrement())
+  name                String
+  phoneNumber         String
+  teamId              Int
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Event {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  location            String
+  description         String
+  startDate           DateTime
+  teamId              Int
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
