@@ -1,4 +1,6 @@
 import { useLazyQuery } from '@apollo/client'
+import { Redirect, routes } from '@redwoodjs/router'
+
 import { useState } from 'react'
 
 import {
@@ -9,29 +11,33 @@ import {
   TextField,
   Submit,
 } from '@redwoodjs/forms'
+import { useAuth } from '@redwoodjs/auth'
 
 export const QUERY = gql`
-  query FindTeams {
-    teams {
+  query FindTeamByJoinCode($joinCode: String) {
+    team(joinCode: $joinCode) {
       id
       name
       location
       description
+      joinCode
       createdAt
       updatedAt
     }
   }
 `
 const JoinForm = (props) => {
+  const { currentUser } = useAuth()
   const [joinCode, setjoinCode] = useState('')
   const [getTeams, { loading }] = useLazyQuery(QUERY, {
     onCompleted: (data) => {
-      console.log(data.teams)
+      const teamToJoin = data.teams.find((team) => team.joinCode === joinCode)
+      currentUser.teamId = teamToJoin.id
+      return <Redirect to={routes.team({ id: currentUser.teamId })} />
     },
   })
 
   const onSubmit = (formData) => {
-    console.table(formData)
     setjoinCode(formData.joinCode)
     getTeams()
   }

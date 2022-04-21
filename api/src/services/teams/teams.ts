@@ -12,6 +12,12 @@ export const team = ({ id }: Prisma.TeamWhereUniqueInput) => {
   })
 }
 
+export const teamByJoinCode = ({ joinCode }: Prisma.TeamWhereUniqueInput) => {
+  return db.team.findUnique({
+    where: { joinCode: joinCode },
+  })
+}
+
 interface CreateTeamArgs {
   input: Prisma.TeamCreateInput
 }

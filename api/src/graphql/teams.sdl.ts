@@ -11,6 +11,7 @@ export const schema = gql`
 
   type Query {
     teams: [Team!]! @requireAuth
+    teams(joinCode: String): [Team] @requireAuth
     team(id: Int!): Team @requireAuth
   }
 
